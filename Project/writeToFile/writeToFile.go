@@ -9,7 +9,7 @@ import (
 	"os"
 )
 
-const pass = "D:\\myGO\\Lessons\\Project\\storage\\"
+const pass = "D:\\myGO\\Lessons\\Projects\\Project\\storage\\"
 
 func WriteToFileJson(myUser []model.MyUser, filename string) { // write to file format "txt"
 

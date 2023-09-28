@@ -23,7 +23,7 @@ func RunHTTP() {
 
 		if r.RequestURI == "/user" {
 
-			body, err := ioutil.ReadFile(`D:\myGO\Lessons\Project\storage\rr.txt`)
+			body, err := ioutil.ReadFile(`D:\myGO\Lessons\Projects\Project\storage\rr.txt`)
 			if err != nil {
 				fmt.Print(err)
 			}

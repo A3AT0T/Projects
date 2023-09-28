@@ -12,5 +12,5 @@ func main() {
 
 	serverClient.ServerClient()
 	// serverClient.RunHTTP()
-
+	// serverClient.Sc()
 }
