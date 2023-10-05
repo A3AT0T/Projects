@@ -10,7 +10,12 @@ func main() {
 	// decodeMyUsers, _ := (optionWithUsers.DecodeUser(encMyUsers))
 	// printFormat.PrintFormat(decodeMyUsers)
 
-	serverClient.ServerClient()
+	// serverClient.ServerClient()
 	// serverClient.RunHTTP()
-	// serverClient.Sc()
+	serverClient.Sc()
+	// serverClient.HttpMassageReadFromTCP()
+
+	// serverClient.RunHTTP()
+	// serverClient.TEST()
+
 }

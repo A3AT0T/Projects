@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"log"
 	"net"
+	"net/http"
 )
 
 func Sc() {
@@ -18,7 +19,7 @@ func Sc() {
 			ch <- 1
 		}()
 
-		listener, err := net.Listen("tcp", "127.0.0.1:8080")
+		listener, err := net.Listen("tcp", "127.0.0.1:12345")
 		if err != nil {
 			fmt.Println(err)
 		}
@@ -42,19 +43,25 @@ func Sc() {
 		defer func() {
 			ch <- 1
 		}()
-		conn, err := net.Dial("tcp", "127.0.0.1:8080")
+		conn, err := net.Dial("tcp", "127.0.0.1:12345")
 		if err != nil {
 			fmt.Println(err)
 		}
 		defer conn.Close()
 		fmt.Println("client.ok")
 
+		//add server on client side ???
+
 		var op string
 
 		for {
 			fmt.Print("Select operation:\n 1) Add\n 2) Show users\n q) Exit\n> ")
 
-			fmt.Scanln(&op)
+			_, err := fmt.Scanln(&op)
+			if err != nil {
+				fmt.Println("Invalid input", err)
+				continue
+			}
 			input := make([]byte, 1024)
 			input = []byte(op)
 			conn.Write(input)
@@ -64,8 +71,43 @@ func Sc() {
 
 		}
 	}()
+	go func() {
+		// defer func() {
+		// 	ch <- 1
+		// }()
+		http.ListenAndServe("127.0.0.1:8080", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+
+			if r.RequestURI == "/user" {
+				conn, err := net.Dial("tcp", "127.0.0.1:12345")
+				if err != nil {
+					http.Error(w, "Failed to connect TCP server", http.StatusInternalServerError)
+					return
+				}
+				defer conn.Close()
+				// Prepare and send data to the TCP server
+				data := []byte("show me my user")
+				_, err = conn.Write(data)
+				if err != nil {
+					http.Error(w, "Failed to send data to TCP srerve", http.StatusInternalServerError)
+				}
+				return
+			}
+			conn, _ := net.Dial("tcp", "127.0.0.1:12345")
+			defer conn.Close()
+
+			data := []byte("111")
+			_, err := conn.Write(data)
+			if err != nil {
+				http.Error(w, "Failed to send data to TCP srerve", http.StatusInternalServerError)
+			}
+			fmt.Fprintln(w, "Data sent to TCP server successfully")
+
+		}))
+	}()
+
 	<-ch
 	<-ch
+	// <-ch
 }
 func handlerConn(conn net.Conn) {
 	defer conn.Close()
@@ -100,6 +142,10 @@ func handlerConn(conn net.Conn) {
 				fmt.Println(err)
 			}
 			printFormat.PrintFormat(mu)
+
+		case "111":
+			fmt.Println("when pigs fly")
+
 		case "3", "q":
 			log.Fatal()
 		}
