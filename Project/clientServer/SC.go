@@ -19,7 +19,7 @@ func Sc() {
 			ch <- 1
 		}()
 
-		listener, err := net.Listen("tcp", "127.0.0.1:12345")
+		listener, err := net.Listen("tcp", "127.0.0.1:8001")
 		if err != nil {
 			fmt.Println(err)
 		}
@@ -43,7 +43,7 @@ func Sc() {
 		defer func() {
 			ch <- 1
 		}()
-		conn, err := net.Dial("tcp", "127.0.0.1:12345")
+		conn, err := net.Dial("tcp", "127.0.0.1:8001")
 		if err != nil {
 			fmt.Println(err)
 		}
@@ -78,13 +78,13 @@ func Sc() {
 		http.ListenAndServe("127.0.0.1:8080", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
 			if r.RequestURI == "/user" {
-				conn, err := net.Dial("tcp", "127.0.0.1:12345")
+				conn, err := net.Dial("tcp", "127.0.0.1:8001")
 				if err != nil {
 					http.Error(w, "Failed to connect TCP server", http.StatusInternalServerError)
 					return
 				}
 				defer conn.Close()
-				// Prepare and send data to the TCP server
+
 				data := []byte("show me my user")
 				_, err = conn.Write(data)
 				if err != nil {
@@ -92,7 +92,7 @@ func Sc() {
 				}
 				return
 			}
-			conn, _ := net.Dial("tcp", "127.0.0.1:12345")
+			conn, _ := net.Dial("tcp", "127.0.0.1:8001")
 			defer conn.Close()
 
 			data := []byte("111")
